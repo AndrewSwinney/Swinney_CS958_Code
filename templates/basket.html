@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basket</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation bar -->
+    <div class="navbar">
+        <a href="/" class="navbar__title">Enviro Health</a>
+        <a href="/" class="navbar__home">Home</a>
+    </div>
+
+    <!-- Page title -->
+    <h1>Basket</h1>
+
+    <!-- Checkout Message -->
+    {% if session.get('checkout_message') %}
+    <div class="checkout-message">
+        <p>{{ session.pop('checkout_message') }}</p>
+    </div>
+    <script>
+        // Hide the checkout message after 3 seconds
+        setTimeout(function() {
+            var checkoutMessageBox = document.querySelector('.checkout-message');
+            if (checkoutMessageBox) {
+                checkoutMessageBox.style.display = 'none';
+            }
+        }, 3000);  // Hide after 3 seconds
+    </script>
+    {% endif %}
+
+    <!-- Summary of items in the basket -->
+    <div class="summary">
+        <h2>Summary</h2>
+        <ul>
+            <!-- Loop through basket items and display each product's name and price -->
+            {% for product in basket %}
+                <li>
+                    {{ product['name'] }} - £{{ product['price'] }}
+                </li>
+            {% endfor %}
+        </ul>
+        <p class="summary__total-price">Basket Total: £{{ total_price }}</p>
+        <!-- Checkout button form -->
+        <div class="checkout-button">
+            <form action="/checkout" method="POST">
+                <button type="submit">Checkout</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Display basket items -->
+    {% if basket %}
+        <ul>
+            <!-- Loop through basket items and display each product's details and image -->
+            {% for product in basket %}
+                <li class="basket-item">
+                    <!-- Basket item details -->
+                    <div class="basket-item__details">
+                        <p class="basket-item__name" style="font-weight: bold;">{{ product['name'] }}</p>
+                        <p class="basket-item__price">Price: £{{ product['price'] }}</p>
+                    </div>
+                    <!-- Basket item image and remove button form -->
+                    <div class="basket-item__image">
+                        <img src="{{ product['image_url'] }}" alt="Product Image">
+                        <form action="/remove_from_basket" method="POST">
+                            <input type="hidden" name="product_id" value="{{ product['id'] }}">
+                            <button type="submit" class="basket-item__button">Remove from Basket</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <!-- Display message when the basket is empty -->
+        <p>Your basket is empty.</p>
+    {% endif %}
+</body>
+</html>
+
+
+
+
